@@ -355,18 +355,8 @@ class DeviceHexDataField:
         values = values or {}
         match fieldtype:
             case DeviceHexDataTypes.str.value:
-                if embedded_messages := fieldmap.get("embedded_messages", {}):
-                    inner_type = hexdata[8:10].hex() if len(hexdata) >= 10 else ""
-                    if embedded_map := embedded_messages.get(inner_type):
-                        values.update(
-                            self.extract_value(
-                                hexdata=hexdata,
-                                fieldtype=DeviceHexDataTypes.strb.value,
-                                fieldmap=embedded_map,
-                            )
-                        )
                 # various number of bytes, string (Base type), use only printable part
-                elif name := fieldmap.get(NAME):
+                if name := fieldmap.get(NAME):
                     if "timestamp" in name:
                         # convert ms string into timestamp value of seconds
                         values[name] = convert_timestamp(hexdata, ms=True)
@@ -824,11 +814,6 @@ class DeviceHexData:
             return self.hexbytes.hex(sep=sep)
         return self.hexbytes.hex()
 
-    @staticmethod
-    def _format_decoded_values(values: dict[str, Any]) -> str:
-        """Return a compact string representation of extracted child values."""
-        return ", ".join(f"{key}={value}" for key, value in values.items())
-
     def decode(self) -> str:
         """Return the field representation in human readable format."""
         if self.length > 0:
@@ -858,19 +843,16 @@ class DeviceHexData:
                         for k, v in value.items()
                     }
                 for f in self.msg_fields.values():
-                    fld = fieldmap.get(f.f_name.hex()) or {}
-                    name = fld.get(NAME) or ""
+                    name = (
+                        (fld := fieldmap.get(f.f_name.hex()) or {}).get(NAME)
+                        or (fld.get(BYTES) or {})
+                        or ""
+                    )
                     factor = fld.get(FACTOR) or None
                     divider = fld.get(VALUE_DIVIDER) or None
                     signed = fld.get(SIGNED)
-                    if not name and (fld.get(BYTES) or fld.get("embedded_messages")):
-                        if values := f.values(fieldmap=fld):
-                            name = self._format_decoded_values(values)
-                        elif fld.get(BYTES):
-                            name = fld.get(BYTES) or ""
                     if (
                         isinstance(name, str)
-                        and "=" not in name
                         and "timestamp" in str(name)
                         and f.f_type
                         in [DeviceHexDataTypes.str.value, DeviceHexDataTypes.var.value]

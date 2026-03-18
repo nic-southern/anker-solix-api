@@ -1930,91 +1930,19 @@ _A17E1_040a = {
     "fe": {NAME: "msg_timestamp"},
 }
 
-_AX170_0666_EMBEDDED_040A = {
-    "16": {NAME: "expansion_packs", TYPE: DeviceHexDataTypes.ui.value},
-    "20": {NAME: "main_battery_soc", TYPE: DeviceHexDataTypes.ui.value},
-    "24": {
-        NAME: "exp_1_sn",
-        LENGTH: 17,
-        TYPE: DeviceHexDataTypes.str.value,
-    },
-    "49": {NAME: "exp_1_index", TYPE: DeviceHexDataTypes.ui.value},
-    "50": {
-        NAME: "exp_1_temperature",
-        TYPE: DeviceHexDataTypes.ui.value,
-        SIGNED: True,
-    },
-    "52": {NAME: "exp_1_soc", TYPE: DeviceHexDataTypes.ui.value},
-    "53": {NAME: "exp_1_soh", TYPE: DeviceHexDataTypes.ui.value},
-    "60": {
-        NAME: "exp_2_sn",
-        LENGTH: 17,
-        TYPE: DeviceHexDataTypes.str.value,
-    },
-    "85": {NAME: "exp_2_index", TYPE: DeviceHexDataTypes.ui.value},
-    "86": {
-        NAME: "exp_2_temperature",
-        TYPE: DeviceHexDataTypes.ui.value,
-        SIGNED: True,
-    },
-    "88": {NAME: "exp_2_soc", TYPE: DeviceHexDataTypes.ui.value},
-    "89": {NAME: "exp_2_soh", TYPE: DeviceHexDataTypes.ui.value},
-    "96": {
-        NAME: "embedded_040a_timestamp",
-        LENGTH: 4,
-        TYPE: DeviceHexDataTypes.var.value,
-    },
-}
-
-_AX170_0666_EMBEDDED_0405 = {
-    "16": {
-        NAME: "attached_device_sn",
-        TYPE: DeviceHexDataTypes.str.value,
-    },
-    "36": {NAME: "attached_device_soc", TYPE: DeviceHexDataTypes.ui.value},
-    "40": {
-        NAME: "attached_device_expansion_packs?",
-        TYPE: DeviceHexDataTypes.ui.value,
-    },
-    # "44": {
-    #     NAME: "attached_device_0405_a8?",
-    #     LENGTH: 4,
-    #     TYPE: DeviceHexDataTypes.var.value,
-    # },
-    # "51": {
-    #     NAME: "attached_device_0405_a9?",
-    #     LENGTH: 4,
-    #     TYPE: DeviceHexDataTypes.var.value,
-    # },
-    # "58": {
-    #     NAME: "attached_device_0405_aa?",
-    #     TYPE: DeviceHexDataTypes.sile.value,
-    # },
-    # "63": {
-    #     NAME: "attached_device_0405_ba?",
-    #     LENGTH: 4,
-    #     TYPE: DeviceHexDataTypes.var.value,
-    # },
-    # "70": {NAME: "attached_device_status_0405?", TYPE: DeviceHexDataTypes.ui.value},
-    "81": {
-        NAME: "embedded_0405_timestamp",
-        LENGTH: 4,
-        TYPE: DeviceHexDataTypes.var.value,
-    },
-}
-
 # AX170 Power dock for home backup systems A17E1
 _AX170_0666 = {
-    # AX170 power dock attached-device expansion/runtime snapshot.
+    # AX170 power dock attached-device expansion/runtime forwarded messages
     TOPIC: "state_info",
     "a2": {NAME: "attached_device_sn"},
     "a3": {NAME: "attached_device_pn"},
-    "a4": {
-        "embedded_messages": {
-            "040a": _AX170_0666_EMBEDDED_040A,
-            "0405": _AX170_0666_EMBEDDED_0405,
-        }
-    },
+    # Ignore for now. Framework does not support embedded messages / forward messages.
+    # "a4": {
+    #     "embedded_messages": {
+    #         "040a": _AX170_0666_EMBEDDED_040A,
+    #         "0405": _AX170_0666_EMBEDDED_0405,
+    #     }
+    # },
 }
 
 _AX170_0405 = {
@@ -2035,14 +1963,14 @@ _AX170_0405 = {
     },  # use_time_band: 1=peak, 2=mid-peak, 3=off-peak, 4=super-off-peak
     "c4": {NAME: "grid_power_total"},  # positive=import, negative=export
     "c5": {NAME: "home_load?"},
-    "ca": {
-        BYTES: {
-            "00": {NAME: "ca_byte_01?", TYPE: DeviceHexDataTypes.ui.value},
-            "01": {NAME: "ca_byte_02?", TYPE: DeviceHexDataTypes.ui.value},
-            "02": {NAME: "ca_byte_03?", TYPE: DeviceHexDataTypes.ui.value},
-            "03": {NAME: "ca_byte_04?", TYPE: DeviceHexDataTypes.ui.value},
-        }
-    },
+    # "ca": {
+    #     BYTES: {
+    #         "00": {NAME: "ca_byte_01?", TYPE: DeviceHexDataTypes.ui.value},
+    #         "01": {NAME: "ca_byte_02?", TYPE: DeviceHexDataTypes.ui.value},
+    #         "02": {NAME: "ca_byte_03?", TYPE: DeviceHexDataTypes.ui.value},
+    #         "03": {NAME: "ca_byte_04?", TYPE: DeviceHexDataTypes.ui.value},
+    #     }
+    # },
     "cc": {
         BYTES: {
             "00": {NAME: "power_dock_state_code", TYPE: DeviceHexDataTypes.ui.value}, # Not very reliable, not sure what the setting is exactly.
@@ -4099,7 +4027,7 @@ SOLIXMQTTMAP: Final[dict] = {
     "AX170": {
         "0040": CMD_STATUS_REQUEST,  # one-time status request
         "0057": CMD_REALTIME_TRIGGER,  # for regular status messages 0405 etc
-        "0666": _AX170_0666,
+        # "0666": _AX170_0666,
         "0405": _AX170_0405,
     },
     # SOLIX Smart Generator 5500
